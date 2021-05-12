@@ -798,6 +798,37 @@ func TestUnmarshal(t *testing.T) {
 	)
 }
 
+// Check that we can unmarshal environment variables without
+// explicit bindings or a configuration file.
+func TestUnmarshalWithoutConfigFile(t *testing.T) {
+	v := New()
+	v.AutomaticEnv()
+
+	type Person struct {
+		Name string
+	}
+	type config struct {
+		Port   int
+		Person Person
+	}
+
+	testutil.Setenv(t, "PORT", "1313")
+
+	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	testutil.Setenv(t, "PERSON_NAME", "Sally")
+
+	C := config{}
+
+	v.ReadConfigFrom(C)
+
+	err := v.Unmarshal(&C)
+	if err != nil {
+		t.Fatalf("unable to decode into struct, %v", err)
+	}
+
+	assert.Equal(t, config{Port: 1313, Person: Person{Name: "Sally"}}, C)
+}
+
 func TestUnmarshalWithDecoderOptions(t *testing.T) {
 	Set("credentials", "{\"foo\":\"bar\"}")
 
