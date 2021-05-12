@@ -995,6 +995,33 @@ func (v *Viper) Unmarshal(rawVal interface{}, opts ...DecoderConfigOption) error
 	return decode(v.AllSettings(), defaultDecoderConfig(rawVal, opts...))
 }
 
+// ReadConfigFrom applies the specified data to Viper's configuration.
+// Useful for setting defaults from the specified structs in cases
+// where a configuration file may not be present.
+func ReadConfigFrom(val interface{}) error {
+	return v.ReadConfigFrom(val)
+}
+
+// ReadConfigFrom applies the specified data to Viper's configuration.
+// Useful for setting defaults from the specified structs.
+func (v *Viper) ReadConfigFrom(val interface{}) error {
+	var tmp map[string]interface{}
+	err := mapstructure.Decode(val, &tmp)
+	if err != nil {
+		return fmt.Errorf("error decoding configuration from struct: %v", err)
+	}
+
+	cfgType := v.configType
+	defer func() { v.configType = cfgType }()
+	v.SetConfigType("json")
+	tmpJson, err := json.Marshal(tmp)
+	if err != nil {
+		return fmt.Errorf("error marshaling configuration from struct: %v", err)
+	}
+
+	return v.ReadConfig(bytes.NewReader(tmpJson))
+}
+
 // defaultDecoderConfig returns default mapsstructure.DecoderConfig with suppot
 // of time.Duration values & string slices
 func defaultDecoderConfig(output interface{}, opts ...DecoderConfigOption) *mapstructure.DecoderConfig {
