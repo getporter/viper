@@ -38,6 +38,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/hashicorp/hcl"
 	"github.com/hashicorp/hcl/hcl/printer"
+	"github.com/jeremywohl/flatten"
 	"github.com/magiconair/properties"
 	"github.com/mitchellh/mapstructure"
 	"github.com/pelletier/go-toml"
@@ -993,6 +994,35 @@ func Unmarshal(rawVal interface{}, opts ...DecoderConfigOption) error {
 
 func (v *Viper) Unmarshal(rawVal interface{}, opts ...DecoderConfigOption) error {
 	return decode(v.AllSettings(), defaultDecoderConfig(rawVal, opts...))
+}
+
+// ReadDefaultsFrom applies the specified data to Viper's configuration
+// using SetDefault.
+// Useful for setting defaults from the specified structs in cases
+// where a configuration file may not be present.
+func ReadDefaultsFrom(val interface{}) error {
+	return v.SetDefaultsFrom(val)
+}
+
+// ReadDefaultsFrom applies the specified data to Viper's configuration
+// using SetDefault.
+// Useful for setting defaults from the specified structs in cases
+// where a configuration file may not be present.
+func (v *Viper) SetDefaultsFrom(val interface{}) error {
+	var tmp map[string]interface{}
+	err := mapstructure.Decode(val, &tmp)
+	if err != nil {
+		return fmt.Errorf("error decoding configuration from struct: %v", err)
+	}
+
+	defaults, err := flatten.Flatten(tmp, "", flatten.DotStyle)
+	if err != nil {
+		return fmt.Errorf("error flattening default configuration from struct: %v", err)
+	}
+	for defaultKey, defaultValue := range defaults {
+		v.SetDefault(defaultKey, defaultValue)
+	}
+	return nil
 }
 
 // defaultDecoderConfig returns default mapsstructure.DecoderConfig with suppot

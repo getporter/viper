@@ -9,6 +9,7 @@ require (
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f // indirect
 	github.com/fsnotify/fsnotify v1.4.7
 	github.com/hashicorp/hcl v1.0.0
+	github.com/jeremywohl/flatten v1.0.1
 	github.com/magiconair/properties v1.8.1
 	github.com/mitchellh/mapstructure v1.3.3
 	github.com/pelletier/go-toml v1.2.0
