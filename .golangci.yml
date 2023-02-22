@@ -3,7 +3,10 @@ run:
 
 linters-settings:
     gci:
-        local-prefixes: github.com/spf13/viper
+        sections:
+            - standard
+            - default
+            - prefix(github.com/spf13/viper)
     golint:
         min-confidence: 0
     goimports:
@@ -16,47 +19,64 @@ linters:
         - deadcode
         - dogsled
         - dupl
+        - durationcheck
         - exhaustive
         - exportloopref
         - gci
-        - goconst
         - gofmt
         - gofumpt
         - goimports
-        - golint
+        - gomoddirectives
         - goprintffuncname
         - govet
+        - importas
         - ineffassign
+        - makezero
         - misspell
         - nakedret
+        - nilerr
         - noctx
         - nolintlint
         - prealloc
+        - predeclared
+        - revive
         - rowserrcheck
         - sqlclosecheck
         - staticcheck
         - structcheck
         - stylecheck
+        - tparallel
         - typecheck
         - unconvert
         - unparam
         - unused
         - varcheck
+        - wastedassign
         - whitespace
 
         # fixme
+        # - cyclop
         # - errcheck
+        # - errorlint
+        # - exhaustivestruct
+        # - forbidigo
+        # - forcetypeassert
         # - gochecknoglobals
         # - gochecknoinits
         # - gocognit
+        # - goconst
         # - gocritic
         # - gocyclo
         # - godot
         # - gosec
         # - gosimple
+        # - ifshort
         # - lll
         # - nlreturn
+        # - paralleltest
         # - scopelint
+        # - thelper
+        # - wrapcheck
 
         # unused
         # - depguard
